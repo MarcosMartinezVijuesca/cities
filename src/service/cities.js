@@ -36,6 +36,7 @@ const cityExists = (async (name) => {
 const registerCity = (async (name, population, altitude, foundationDate, area) => {
     const age = getYearsFromNow(new Date(foundationDate));
     const density = getDensity(population, area);
+    let cityId;
 
     const returning = await db('cities').insert({
         name: name,
@@ -45,11 +46,14 @@ const registerCity = (async (name, population, altitude, foundationDate, area) =
         age: age,
         area: area,
         density: density
-    }).returning("id");
+    })
+     .then(async(ids) => {
+        cityId = ids [0];
+     })
 
-    // TODO Incluir age y density como campos a devolver para usarlos en el controller y añadirlos a la response
+    
     const result = {
-        id: returning[0].id,
+        id: cityId,
         age: age,
         density: density
     };
